@@ -7,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using ReminderTGBotConsoleApp.Interfaces;
 using ReminderTGBotConsoleApp.Services;
+using Telegram.Bot;
 
 namespace ReminderTGBotConsoleApp;
 
@@ -24,6 +25,10 @@ class Program
             })
             .ConfigureServices((context, services) =>
             {
+                // Регистрируем Telegram Bot Client
+                var botToken = context.Configuration["TelegramBot:Token"];
+                services.AddSingleton<ITelegramBotClient>(new TelegramBotClient(botToken!)); // [!code ++]
+                
                 // 1. Регистрируем DbContext из проекта DataBase
                 services.AddDbContext<AppDbContext>(options =>
                     options.UseNpgsql(context.Configuration.GetConnectionString("DefaultConnection")));
